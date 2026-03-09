@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EzeeHealth 2nd Opinion — Independent Clinical Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./base.css">
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<!-- ========== LANDING PAGE ========== -->
+<div id="landing-page" class="page active">
+  <nav class="landing-nav">
+    <div class="landing-nav-inner">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" width="36" height="36" fill="none" aria-label="EzeeHealth 2nd Opinion">
+          <rect width="40" height="40" rx="8" fill="#003366"/>
+          <path d="M10 14h8v2h-8zm0 5h12v2H10zm0 5h8v2h-8z" fill="#fff" opacity="0.6"/>
+          <circle cx="30" cy="20" r="6" stroke="#4da6ff" stroke-width="2" fill="none"/>
+          <path d="M28 18l2 2 3-4" stroke="#4da6ff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="logo-text">EzeeHealth <span class="logo-accent">2nd Opinion</span></span>
+      </div>
+      <div class="landing-nav-links">
+        <a href="#about">About</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#guidelines">Guidelines</a>
+        <button class="btn btn-primary btn-sm" onclick="showAuth()">Sign In</button>
+      </div>
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Independent Clinical Review Platform</div>
+      <h1>Evidence-Based Second Opinions for Thiqa Insurance Holders</h1>
+      <p class="hero-subtitle">UK-trained specialist doctors review elective surgery requests using NICE clinical guidelines and AI-powered analysis — ensuring every patient gets the right care at the right time.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="showAuth()">Access Platform</button>
+        <a href="#how-it-works" class="btn btn-outline btn-lg">Learn More</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value">NICE</span>
+          <span class="hero-stat-label">UK Clinical Guidelines</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">UK</span>
+          <span class="hero-stat-label">Board-Certified Doctors</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">AI</span>
+          <span class="hero-stat-label">Powered Rule Engine</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <div class="section-inner">
+      <h2>About the Service</h2>
+      <p class="section-desc">An independent clinical review system for elective surgeries and procedures, designed for Thiqa insurance holders in Abu Dhabi. Combining UK clinical expertise with evidence-based guidelines to ensure appropriate surgical care.</p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <h3>NICE Guidelines</h3>
+          <p>Every case reviewed against the latest National Institute for Health and Care Excellence (NICE) clinical criteria for the specific procedure requested.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>UK Specialist Doctors</h3>
+          <p>Panel of UK-trained, GMC-registered consultant surgeons providing independent clinical opinions across bariatric, ophthalmology, ENT, spine, and cardiology.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>AI-Powered Analysis</h3>
+          <p>Automated rules engine extracts clinical data from uploaded documents and correlates against NICE guidelines, providing structured decision support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="section section-alt">
+    <div class="section-inner">
+      <h2>How It Works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Upload Clinical Documents</h3>
+          <p>Upload the patient's EMR records, lab results, imaging reports, and pre-authorisation request as PDF documents.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>AI Document Processing</h3>
+          <p>The system extracts and segments clinical data — demographics, diagnosis, investigations, medications, and treatment history.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Rules Engine Analysis</h3>
+          <p>NICE guidelines are applied to the extracted data, checking each mandatory criterion for the requested procedure.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3>Clinical Decision</h3>
+          <p>A structured recommendation is generated — approve, request more information, or refer for specialist review.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guidelines" class="section">
+    <div class="section-inner">
+      <h2>Supported Guidelines</h2>
+      <p class="section-desc">The platform covers NICE guidelines for the most common elective surgery categories in the Thiqa scheme.</p>
+      <div class="guidelines-grid">
+        <div class="guideline-card"><span class="guideline-tag">NG246</span>Bariatric Surgery</div>
+        <div class="guideline-card"><span class="guideline-tag">NG77</span>Cataract Surgery</div>
+        <div class="guideline-card"><span class="guideline-tag">CG60</span>Tonsillectomy</div>
+        <div class="guideline-card"><span class="guideline-tag">NG59</span>Spinal Surgery</div>
+        <div class="guideline-card"><span class="guideline-tag">CG126</span>Elective PCI</div>
+        <div class="guideline-card"><span class="guideline-tag">NG226</span>Hip Replacement</div>
+        <div class="guideline-card"><span class="guideline-tag">NG226</span>Knee Replacement</div>
+        <div class="guideline-card"><span class="guideline-tag">CG188</span>Cholecystectomy</div>
+        <div class="guideline-card"><span class="guideline-tag">IPG</span>Hernia Repair</div>
+        <div class="guideline-card"><span class="guideline-tag">NG145</span>Thyroid Surgery</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <div class="landing-footer-inner">
+      <p>&copy; 2026 EzeeHealth. Independent Clinical Review Platform for Thiqa Insurance — Abu Dhabi.</p>
+      <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ========== AUTH PAGE ========== -->
+<div id="auth-page" class="page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="logo-mark">
+          <svg viewBox="0 0 40 40" width="32" height="32" fill="none"><rect width="40" height="40" rx="8" fill="#003366"/><path d="M10 14h8v2h-8zm0 5h12v2H10zm0 5h8v2h-8z" fill="#fff" opacity="0.6"/><circle cx="30" cy="20" r="6" stroke="#4da6ff" stroke-width="2" fill="none"/><path d="M28 18l2 2 3-4" stroke="#4da6ff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="logo-text">2nd Opinion</span>
+        </div>
+        <p class="auth-subtitle">Sign in to access the clinical review platform</p>
+      </div>
+
+      <div id="auth-tabs" class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+        <button type="button" class="btn btn-google" onclick="handleGoogleAuth()">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92A8.78 8.78 0 0 0 17.64 9.2z" fill="#4285F4"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.83.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A9 9 0 0 0 9 18z" fill="#34A853"/><path d="M3.97 10.71A5.41 5.41 0 0 1 3.69 9c0-.6.1-1.17.28-1.71V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.82.96 4.04l3.01-2.33z" fill="#FBBC05"/><path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/></svg>
+          Sign in with Google
+        </button>
+        <div class="auth-divider"><span>or sign in with email</span></div>
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Enter password" required>
+        </div>
+        <div id="login-error" class="form-error" style="display:none"></div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signup-form" class="auth-form" style="display:none" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" placeholder="Dr. John Smith" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" placeholder="Minimum 8 characters" required minlength="8">
+        </div>
+        <div class="form-group">
+          <label for="signup-invite">Invite Code</label>
+          <input type="text" id="signup-invite" placeholder="Enter your invite code" required>
+          <span class="form-hint">Required for first-time registration</span>
+        </div>
+        <div id="signup-error" class="form-error" style="display:none"></div>
+        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+      </form>
+
+      <button class="auth-back" onclick="showLanding()">&larr; Back to home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MAIN APPLICATION ========== -->
+<div id="app-page" class="page">
+  <!-- Top Bar -->
+  <header class="app-header">
+    <div class="app-header-left">
+      <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div class="logo-mark logo-mark-sm">
+        <svg viewBox="0 0 40 40" width="28" height="28" fill="none"><rect width="40" height="40" rx="8" fill="#003366"/><path d="M10 14h8v2h-8zm0 5h12v2H10zm0 5h8v2h-8z" fill="#fff" opacity="0.6"/><circle cx="30" cy="20" r="6" stroke="#4da6ff" stroke-width="2" fill="none"/><path d="M28 18l2 2 3-4" stroke="#4da6ff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="logo-text logo-text-sm">2nd Opinion</span>
+      </div>
+    </div>
+    <div class="app-header-right">
+      <span class="user-name" id="user-display-name">Dr. User</span>
+      <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-view="cases" onclick="switchView('cases')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>Cases</span>
+        </button>
+        <button class="sidebar-link" data-view="upload" onclick="switchView('upload')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload</span>
+        </button>
+        <button class="sidebar-link" data-view="rules" onclick="switchView('rules')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Rules Engine</span>
+        </button>
+        <button class="sidebar-link" data-view="review" onclick="switchView('review')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+          <span>AI Review</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- ===== CASES VIEW ===== -->
+      <div id="view-cases" class="view active">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Clinical Cases</h1>
+            <p class="view-desc">Pre-authorisation requests submitted for independent clinical review</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchView('upload')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Case
+          </button>
+        </div>
+
+        <div class="cases-filters">
+          <div class="search-box">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search cases..." id="case-search" oninput="filterCases()">
+          </div>
+          <div class="filter-chips">
+            <button class="chip active" onclick="filterByType('all', this)">All</button>
+            <button class="chip" onclick="filterByType('Bariatric', this)">Bariatric</button>
+            <button class="chip" onclick="filterByType('Cataract', this)">Cataract</button>
+            <button class="chip" onclick="filterByType('Tonsillectomy', this)">Tonsillectomy</button>
+            <button class="chip" onclick="filterByType('Spinal', this)">Spinal</button>
+            <button class="chip" onclick="filterByType('PCI', this)">PCI</button>
+          </div>
+        </div>
+
+        <div class="cases-table-wrap">
+          <table class="cases-table">
+            <thead>
+              <tr>
+                <th>Case ID</th>
+                <th>Patient</th>
+                <th>Procedure</th>
+                <th>Facility</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="cases-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== UPLOAD VIEW ===== -->
+      <div id="view-upload" class="view">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">Upload Documents</h1>
+            <p class="view-desc">Upload clinical records for independent review</p>
+          </div>
+        </div>
+
+        <div class="upload-container">
+          <div class="health-vault-id">
+            <span class="vault-label">Health Vault ID</span>
+            <span class="vault-id" id="vault-id">ICR-2026</span>
+          </div>
+
+          <div class="upload-zone" id="upload-zone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+            <div class="upload-zone-content">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <p class="upload-zone-title">Drop clinical documents here</p>
+              <p class="upload-zone-hint">PDF, images up to 50MB — EMR records, lab results, imaging reports</p>
+              <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">Browse Files</button>
+              <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none" onchange="handleFileSelect(event)">
+            </div>
+          </div>
+
+          <div class="upload-categories">
+            <h3>Document Categories</h3>
+            <div class="category-grid">
+              <button class="category-btn active" data-cat="all" onclick="filterUploadCat('all', this)">All Documents</button>
+              <button class="category-btn" data-cat="clinical" onclick="filterUploadCat('clinical', this)">Clinical Summary</button>
+              <button class="category-btn" data-cat="labs" onclick="filterUploadCat('labs', this)">Lab Results</button>
+              <button class="category-btn" data-cat="imaging" onclick="filterUploadCat('imaging', this)">Radiology</button>
+              <button class="category-btn" data-cat="medications" onclick="filterUploadCat('medications', this)">Medications</button>
+              <button class="category-btn" data-cat="referral" onclick="filterUploadCat('referral', this)">Referral Letters</button>
+            </div>
+          </div>
+
+          <div id="uploaded-files" class="uploaded-files"></div>
+        </div>
+      </div>
+
+      <!-- ===== RULES ENGINE VIEW ===== -->
+      <div id="view-rules" class="view">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">NICE Guidelines Rules Engine</h1>
+            <p class="view-desc">Evidence-based clinical criteria used for independent review</p>
+          </div>
+        </div>
+
+        <div class="rules-container">
+          <div class="rules-sidebar">
+            <h3>Procedure Guidelines</h3>
+            <div id="rules-list" class="rules-list"></div>
+          </div>
+          <div class="rules-detail" id="rules-detail">
+            <div class="rules-empty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <p>Select a guideline to view its clinical criteria</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== AI REVIEW VIEW (Split Panel) ===== -->
+      <div id="view-review" class="view">
+        <div class="view-header">
+          <div>
+            <h1 class="view-title">AI Clinical Review</h1>
+            <p class="view-desc">Split-panel document review with NICE guidelines correlation</p>
+          </div>
+          <div class="review-case-select">
+            <label for="review-case-dropdown">Select Case:</label>
+            <select id="review-case-dropdown" onchange="loadReviewCase(this.value)">
+              <option value="">Choose a case...</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="review-empty" class="review-empty-state">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.2"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+          <h3>Select a case to begin review</h3>
+          <p>Choose a case from the dropdown above to load the clinical documents and apply NICE guideline analysis.</p>
+        </div>
+
+        <div id="review-panel" class="review-split" style="display:none">
+          <!-- Left: PDF Viewer -->
+          <div class="review-left">
+            <div class="panel-header">
+              <h3>Clinical Document</h3>
+              <span class="panel-badge" id="pdf-filename">document.pdf</span>
+            </div>
+            <div class="pdf-viewer" id="pdf-viewer">
+              <iframe id="pdf-iframe" src="" style="width:100%;height:100%;border:none;"></iframe>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="review-divider" id="review-divider"></div>
+
+          <!-- Right: Extracted Data + Rules -->
+          <div class="review-right">
+            <div class="panel-header">
+              <h3>Clinical Analysis</h3>
+              <div class="panel-tabs">
+                <button class="panel-tab active" onclick="switchReviewTab('extracted', this)">Extracted Data</button>
+                <button class="panel-tab" onclick="switchReviewTab('rules-result', this)">Rules Analysis</button>
+              </div>
+            </div>
+
+            <div id="tab-extracted" class="review-tab-content active">
+              <div id="extracted-data" class="extracted-data"></div>
+            </div>
+
+            <div id="tab-rules-result" class="review-tab-content">
+              <div class="rules-apply-bar">
+                <button class="btn btn-primary" id="apply-rules-btn" onclick="applyRulesEngine()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Apply NICE Guidelines Rules Engine
+                </button>
+              </div>
+              <div id="rules-result" class="rules-result"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>
