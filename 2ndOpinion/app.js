@@ -645,3 +645,253 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sidebar').classList.add('collapsed');
   }
 });
+
+// ===== SPECIALISTS DATA =====
+const SPECIALISTS = [
+  { id: 'SP-001', name: 'Dr. Sarah Mitchell', initials: 'SM', specialty: 'Bariatric Surgery', qualifications: 'FRCS, GMC #7234561', experience: '18 years', location: 'London, UK', status: 'available', matchTypes: ['Bariatric Surgery'] },
+  { id: 'SP-002', name: 'Dr. James Crawford', initials: 'JC', specialty: 'Ophthalmology', qualifications: 'FRCOphth, GMC #6891234', experience: '22 years', location: 'Manchester, UK', status: 'available', matchTypes: ['Cataract Surgery'] },
+  { id: 'SP-003', name: 'Dr. Priya Sharma', initials: 'PS', specialty: 'ENT Surgery', qualifications: 'FRCS (ORL-HNS), GMC #7456123', experience: '15 years', location: 'Birmingham, UK', status: 'available', matchTypes: ['Tonsillectomy'] },
+  { id: 'SP-004', name: 'Dr. Andrew Bennett', initials: 'AB', specialty: 'Spinal Surgery', qualifications: 'FRCS (Orth), GMC #6543217', experience: '20 years', location: 'Leeds, UK', status: 'available', matchTypes: ['Spinal Surgery'] },
+  { id: 'SP-005', name: 'Dr. Fatima Al-Hassan', initials: 'FA', specialty: 'Interventional Cardiology', qualifications: 'FRCP, GMC #7891234', experience: '16 years', location: 'Edinburgh, UK', status: 'available', matchTypes: ['Elective PCI'] }
+];
+
+let assignments = {};
+let opinions = {};
+let activityLogs = [];
+
+// ===== RENDER SPECIALISTS =====
+function renderSpecialists() {
+  var grid = document.getElementById('specialists-grid');
+  if (!grid) return;
+  grid.innerHTML = SPECIALISTS.map(function(s) {
+    var assignedCases = Object.keys(assignments).filter(function(k) { return assignments[k] === s.id; });
+    return '<div class="specialist-card">' +
+      '<div class="specialist-card-header">' +
+      '<div class="specialist-avatar">' + s.initials + '</div>' +
+      '<div><div class="specialist-option-name">' + s.name + '</div>' +
+      '<div class="specialist-option-detail">' + s.specialty + '</div></div>' +
+      '<span class="specialist-status available">Available</span></div>' +
+      '<div class="specialist-detail-row"><span>Qualifications</span><span>' + s.qualifications + '</span></div>' +
+      '<div class="specialist-detail-row"><span>Experience</span><span>' + s.experience + '</span></div>' +
+      '<div class="specialist-detail-row"><span>Location</span><span>' + s.location + '</span></div>' +
+      '<div class="specialist-detail-row"><span>Assigned Cases</span><span>' + assignedCases.length + '</span></div>' +
+      '</div>';
+  }).join('');
+}
+
+// ===== ASSIGNMENT MODAL =====
+var pendingAssignCaseId = null;
+var selectedSpecialistId = null;
+
+function openAssignModal(caseId) {
+  pendingAssignCaseId = caseId;
+  selectedSpecialistId = null;
+  document.getElementById('assign-case-id').textContent = caseId;
+  document.getElementById('confirm-assign-btn').disabled = true;
+  var c = CASES.find(function(x) { return x.id === caseId; });
+  var list = document.getElementById('specialist-select-list');
+  list.innerHTML = SPECIALISTS.map(function(s) {
+    var isMatch = s.matchTypes.indexOf(c.type) >= 0;
+    var cls = 'specialist-option' + (isMatch ? ' recommended' : '');
+    return '<label class="' + cls + '">' +
+      '<input type="radio" name="specialist-select" value="' + s.id + '" onchange="selectSpecialist(this.value)">' +
+      '<div class="specialist-avatar">' + s.initials + '</div>' +
+      '<div><div class="specialist-option-name">' + s.name + (isMatch ? ' <span class="match-badge">Best Match</span>' : '') + '</div>' +
+      '<div class="specialist-option-detail">' + s.specialty + ' &middot; ' + s.experience + '</div></div></label>';
+  }).join('');
+  var modal = document.getElementById('assign-modal');
+  modal.style.display = 'flex';
+  setTimeout(function() { modal.classList.add('visible'); }, 10);
+}
+
+function selectSpecialist(id) {
+  selectedSpecialistId = id;
+  document.getElementById('confirm-assign-btn').disabled = false;
+}
+
+function confirmAssignment() {
+  if (!pendingAssignCaseId || !selectedSpecialistId) return;
+  assignments[pendingAssignCaseId] = selectedSpecialistId;
+  var specialist = SPECIALISTS.find(function(s) { return s.id === selectedSpecialistId; });
+  addLog('assignment', pendingAssignCaseId, currentUser ? currentUser.name : 'Admin', 'Assigned to ' + specialist.name + ' (' + specialist.specialty + ')');
+  closeAssignModal();
+  renderCases();
+  renderSpecialists();
+  renderLogs();
+}
+
+function closeAssignModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  var modal = document.getElementById('assign-modal');
+  modal.classList.remove('visible');
+  setTimeout(function() { modal.style.display = 'none'; }, 300);
+}
+
+// ===== OPINION MODAL =====
+var currentOpinionCaseId = null;
+
+function openOpinionModal(caseId) {
+  currentOpinionCaseId = caseId;
+  var c = CASES.find(function(x) { return x.id === caseId; });
+  var specId = assignments[caseId];
+  var spec = SPECIALISTS.find(function(s) { return s.id === specId; });
+  document.getElementById('opinion-case-id').textContent = caseId;
+  document.getElementById('opinion-specialist-name').textContent = spec ? spec.name : '';
+  document.getElementById('opinion-assessment').value = '';
+  document.getElementById('opinion-recommendation').value = '';
+  document.getElementById('opinion-notes').value = '';
+  var details = document.getElementById('opinion-case-details');
+  details.innerHTML = '<h4>' + c.patient + ' &mdash; ' + c.procedure + '</h4>' +
+    '<p><strong>Facility:</strong> ' + c.facility + '</p>' +
+    '<p><strong>Date:</strong> ' + c.date + '</p>' +
+    '<p><strong>ICD-10:</strong> ' + c.icd10 + '</p>';
+  var modal = document.getElementById('opinion-modal');
+  modal.style.display = 'flex';
+  setTimeout(function() { modal.classList.add('visible'); }, 10);
+}
+
+function switchOpinionTab(tab, el) {
+  document.querySelectorAll('.specialist-tab').forEach(function(t) { t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.specialist-tab-content').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('opinion-tab-' + tab).classList.add('active');
+}
+
+function submitOpinion(e) {
+  e.preventDefault();
+  var assessment = document.getElementById('opinion-assessment').value;
+  var recommendation = document.getElementById('opinion-recommendation').value;
+  var notes = document.getElementById('opinion-notes').value;
+  opinions[currentOpinionCaseId] = { assessment: assessment, recommendation: recommendation, notes: notes, date: new Date().toISOString().slice(0,10) };
+  var c = CASES.find(function(x) { return x.id === currentOpinionCaseId; });
+  if (c) c.status = 'reviewed';
+  var specId = assignments[currentOpinionCaseId];
+  var spec = SPECIALISTS.find(function(s) { return s.id === specId; });
+  addLog('opinion-submission', currentOpinionCaseId, spec ? spec.name : 'Specialist', 'Opinion submitted: ' + recommendation);
+  addLog('admin-notification', currentOpinionCaseId, 'System', 'New opinion available for review');
+  closeOpinionModal();
+  renderCases();
+  renderLogs();
+}
+
+function closeOpinionModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  var modal = document.getElementById('opinion-modal');
+  modal.classList.remove('visible');
+  setTimeout(function() { modal.style.display = 'none'; }, 300);
+}
+
+// ===== ACTIVITY LOGS =====
+function addLog(type, caseId, user, details) {
+  activityLogs.unshift({
+    timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19),
+    type: type,
+    caseId: caseId,
+    user: user,
+    details: details
+  });
+}
+
+function renderLogs() {
+  var tbody = document.getElementById('logs-tbody');
+  var empty = document.getElementById('logs-empty');
+  if (!tbody) return;
+  if (activityLogs.length === 0) {
+    tbody.innerHTML = '';
+    if (empty) empty.style.display = 'flex';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  tbody.innerHTML = activityLogs.map(function(log) {
+    var typeClass = 'log-type log-type-' + log.type;
+    var typeLabel = log.type.replace(/-/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+    return '<tr><td>' + log.timestamp + '</td>' +
+      '<td><span class="' + typeClass + '">' + typeLabel + '</span></td>' +
+      '<td>' + log.caseId + '</td>' +
+      '<td>' + log.user + '</td>' +
+      '<td><span class="log-details">' + log.details + '</span></td></tr>';
+  }).join('');
+}
+
+// ===== REPORT GENERATION =====
+function openReport(caseId) {
+  var c = CASES.find(function(x) { return x.id === caseId; });
+  if (!c) return;
+  var specId = assignments[caseId];
+  var spec = SPECIALISTS.find(function(s) { return s.id === specId; });
+  var op = opinions[caseId];
+  var content = document.getElementById('report-content');
+  content.innerHTML = '<div class="report-header">' +
+    '<h3>Independent Clinical Review Report</h3>' +
+    '<p><strong>Case:</strong> ' + c.id + ' | <strong>Date:</strong> ' + c.date + '</p>' +
+    '<p><strong>Patient:</strong> ' + c.patient + ' | <strong>Procedure:</strong> ' + c.procedure + '</p>' +
+    '<p><strong>Facility:</strong> ' + c.facility + '</p>' +
+    (spec ? '<p><strong>Reviewing Specialist:</strong> ' + spec.name + ' (' + spec.specialty + ')</p>' : '') +
+    '</div>' +
+    (op ? '<div class="report-opinion"><h4>Specialist Opinion</h4>' +
+    '<p><strong>Recommendation:</strong> ' + op.recommendation + '</p>' +
+    '<p><strong>Assessment:</strong> ' + op.assessment + '</p>' +
+    (op.notes ? '<p><strong>Notes:</strong> ' + op.notes + '</p>' : '') +
+    '<p class="opinion-submitted-note">Submitted: ' + op.date + '</p></div>' : '<p><em>No opinion submitted yet.</em></p>') +
+    '<div class="report-rules"><h4>NICE Guidelines Compliance</h4>' +
+    c.ruleResults.map(function(r) {
+      var icon = r.pass === true ? '&#10003;' : r.pass === false ? '&#10007;' : '&#9888;';
+      return '<p>' + icon + ' <strong>' + r.rule + '</strong> ' + r.name + ': ' + r.detail.slice(0, 100) + '...</p>';
+    }).join('') + '</div>';
+  var modal = document.getElementById('report-modal');
+  modal.style.display = 'flex';
+  setTimeout(function() { modal.classList.add('visible'); }, 10);
+}
+
+function closeReportModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  var modal = document.getElementById('report-modal');
+  modal.classList.remove('visible');
+  setTimeout(function() { modal.style.display = 'none'; }, 300);
+}
+
+function printReport() {
+  window.print();
+}
+
+// ===== OVERRIDE: renderCases with Assign/Report/Opinion buttons =====
+// This replaces the original renderCases to add the new Actions column
+var _originalShowApp = showApp;
+showApp = function() {
+  _originalShowApp();
+  renderSpecialists();
+  renderLogs();
+};
+
+var _origRenderCases = renderCases;
+renderCases = function() {
+  var tbody = document.getElementById('cases-tbody');
+  var search = (document.getElementById('case-search').value || '').toLowerCase();
+  var filtered = CASES.filter(function(c) {
+    var matchType = currentFilter === 'all' || c.type.toLowerCase().includes(currentFilter.toLowerCase());
+    var matchSearch = !search || c.patient.toLowerCase().includes(search) || c.id.toLowerCase().includes(search) || c.procedure.toLowerCase().includes(search);
+    return matchType && matchSearch;
+  });
+  tbody.innerHTML = filtered.map(function(c) {
+    var statusClass = c.status === 'reviewed' ? 'status-reviewed' : c.status === 'uploaded' ? 'status-uploaded' : 'status-pending';
+    var statusLabel = c.status.charAt(0).toUpperCase() + c.status.slice(1);
+    var specId = assignments[c.id];
+    var spec = specId ? SPECIALISTS.find(function(s) { return s.id === specId; }) : null;
+    var assignBtn = spec ?
+      '<span class="assigned-label">' + spec.initials + '</span>' :
+      '<button class="btn-assign" onclick="openAssignModal(\'' + c.id + '\')">Assign</button>';
+    var opinionBtn = spec ?
+      '<button class="btn-assign" onclick="openOpinionModal(\'' + c.id + '\')">Opinion</button>' : '';
+    var reportBtn = '<button class="btn-report" onclick="openReport(\'' + c.id + '\')">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Report</button>';
+    return '<tr>' +
+      '<td>' + c.id + '</td>' +
+      '<td><div class="patient-info"><strong>' + c.patient + '</strong><small>' + c.intro + '</small></div></td>' +
+      '<td>' + c.procedure + '</td>' +
+      '<td>' + c.facility + '</td>' +
+      '<td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>' +
+      '<td>' + c.date + '</td>' +
+      '<td><div class="case-actions-cell">' + assignBtn + opinionBtn + reportBtn +
+      '<button class="btn-assign" onclick="openCaseReview(\'' + c.id + '\')">Review</button></div></td></tr>';
+  }).join('');
+};
