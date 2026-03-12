@@ -763,6 +763,9 @@ const SPECIALISTS = [
 
 let assignments = {};
 let opinions = {};
+// Pre-populate demo data for reviewed cases
+assignments["ICR-2026-002"] = "SP-011";
+opinions["ICR-2026-002"] = { recommendation: "Approve — meets all NICE NG77 criteria for cataract surgery. Functional impairment well-documented, biometry complete, day-case suitability confirmed.", assessment: "Patient presents with significant visual impairment affecting daily activities. Clinical assessment confirms Grade 3+ nuclear sclerosis. All mandatory NICE criteria satisfied.", notes: "Second eye to be assessed independently post-operatively. Diabetic retinopathy stable — cleared by retinal team.", date: "2026-03-05" };
 let activityLogs = [
   { timestamp: '2026-03-13 13:29:00', type: 'ai-review', caseId: 'ICR-2026-007', user: 'AI Engine', details: 'AI rules engine analysis: 6/7 rules passed' },
   { timestamp: '2025-09-04 13:06:00', type: 'ai-review', caseId: 'ICR-2026-002', user: 'AI Engine', details: 'AI rules engine analysis: 6/7 rules passed' },
