@@ -3,6 +3,9 @@
    ========================================================================== */
 
 // ===== DATA =====
+var API_URL = window.location.hostname === "localhost" ? "http://localhost:8080" : "https://2ndopinion-api-ezeehealthclinic.a.run.app";
+var currentCaseId = "";
+var currentUploadCategory = "uncategorized";
 const VALID_INVITE_CODES = ['ezee2026!'];
 const DEMO_USERS = [
   { email: 'demo@ezeehealth.com', password: 'demo1234', name: 'Dr. Demo User' },
@@ -440,11 +443,24 @@ function handleFileSelect(e) {
 }
 
 function addUploadedFile(file) {
-  var id = 'file-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
-  uploadedFiles.push({ id: id, name: file.name, size: file.size, type: file.type, date: new Date().toISOString().slice(0, 10) });
-  renderUploadedFiles();
+    var id = "file-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6);
+    var entry = { id: id, name: file.name, size: file.size, type: file.type, date: new Date().toISOString().slice(0, 10), status: "uploading", gcsUrl: "" };
+    uploadedFiles.push(entry);
+    renderUploadedFiles();
+    var formData = new FormData();
+    formData.append("file", file);
+    formData.append("caseId", currentCaseId || "unknown");
+    formData.append("category", currentUploadCategory || "uncategorized");
+    fetch(API_URL + "/upload-and-ocr", { method: "POST", body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            entry.status = data.success ? "uploaded" : "error";
+            entry.gcsUrl = data.url || "";
+            if (data.ocr && data.ocr.text) { entry.ocrText = data.ocr.text; entry.ocrEntities = data.ocr.entities; }
+            renderUploadedFiles();
+        })
+        .catch(function(err) { entry.status = "local-only"; renderUploadedFiles(); console.log("Upload to GCS skipped:", err.message); });
 }
-
 function renderUploadedFiles() {
   var container = document.getElementById('uploaded-files');
   container.innerHTML = uploadedFiles.map(function(f) {
