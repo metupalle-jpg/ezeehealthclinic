@@ -50,7 +50,7 @@
 <p>An independent clinical review system for elective surgeries and procedures, designed for Thiqa insurance holders in Abu Dhabi. Combining UK clinical expertise with evidence-based guidelines to ensure appropriate surgical care.</p>
 <div class="about-grid">
 <div class="about-card"><h3>NICE Guidelines</h3><p>Every case reviewed against the latest National Institute for Health and Care Excellence (NICE) clinical criteria for the specific procedure requested.</p></div>
-<div class="about-card"><h3>UK Specialist Doctors</h3><p>Panel of UK-trained, GMC-registered consultant surgeons providing independent clinical opinions across bariatric, ophthalmology, ENT, spine, and cardiology.</p></div>
+<div class="about-card"><h3>UK Consultant Doctors</h3><p>Panel of UK-trained, GMC-registered consultant surgeons providing independent clinical opinions across bariatric, ophthalmology, ENT, spine, and cardiology.</p></div>
 <div class="about-card"><h3>AI-Powered Analysis</h3><p>Automated rules engine extracts clinical data from uploaded documents and correlates against NICE guidelines, providing structured decision support.</p></div>
 </div></section>
 <section class="how-it-works" id="how-it-works">
@@ -244,7 +244,7 @@
 <!-- ========== ASSIGNMENT MODAL ========== -->
 <div id="assign-modal" class="modal-overlay" onclick="closeAssignModal(event)">
 <div class="modal-card">
-<div class="modal-header"><h2>Assign to Specialist</h2>
+<div class="modal-header"><h2>Assign to Consultant</h2>
 <button class="modal-close" onclick="closeAssignModal()">&times;</button></div>
 <div class="modal-body">
 <p>Select a consultant to review case <strong id="assign-case-id"></strong></p>
@@ -252,7 +252,7 @@
 </div>
 <div class="modal-footer">
 <button class="btn btn-outline" onclick="closeAssignModal()">Cancel</button>
-<button id="confirm-assign-btn" class="btn btn-primary" onclick="confirmAssignment()" disabled>Assign Specialist</button>
+<button id="confirm-assign-btn" class="btn btn-primary" onclick="confirmAssignment()" disabled>Assign Consultant</button>
 </div></div></div>
 <!-- ========== OPINION MODAL ========== -->
 <div id="opinion-modal" class="modal-overlay" onclick="closeOpinionModal(event)">
@@ -276,7 +276,7 @@
 <option value="approve">Approve — Meets NICE Criteria</option>
 <option value="more-info">Request More Information</option>
 <option value="deny">Deny — Does Not Meet Criteria</option>
-<option value="refer">Refer to Another Specialist</option>
+<option value="refer">Refer to Another Consultant</option>
 </select></div>
 <div class="form-group"><label class="opinion-label">Supporting Notes</label>
 <textarea class="opinion-textarea" id="opinion-notes" rows="3" placeholder="Additional notes or conditions..."></textarea></div>
