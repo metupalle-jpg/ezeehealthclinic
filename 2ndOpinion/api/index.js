@@ -96,51 +96,6 @@ app.post('/signed-url', async (req, res) => {
   }
 });
 
-// Data fragmentation - extract structured data from OCR text
-  var nameMatch = text.match(/(?:patient|name)[:\s]+([A-Za-z\s]+)/i);
-  if (nameMatch) info.name = nameMatch[1].trim();
-  var ageMatch = text.match(/(\d{1,3})[\s-]*(?:year|yr|y\/o)/i);
-  if (ageMatch) info.age = ageMatch[1];
-  var genderMatch = text.match(/(?:gender|sex)[:\s]*(male|female|m|f)/i);
-  if (genderMatch) info.gender = genderMatch[1];
-  var weightMatch = text.match(/(\d{2,3})[\s]*(?:kg|kilogram)/i);
-  if (weightMatch) info.weight = weightMatch[1] + ' kg';
-  var heightMatch = text.match(/(\d{2,3})[\s]*(?:cm|centimeter)/i);
-  if (heightMatch) info.height = heightMatch[1] + ' cm';
-  var bmiMatch = text.match(/(?:bmi)[:\s]*(\d+\.?\d*)/i);
-  if (bmiMatch) info.bmi = bmiMatch[1];
-  return info;
-}
-
-function extractDiagnosis(text) {
-  var diagSection = text.match(/(?:diagnosis|diagnostic|impression)[:\s]*([\s\S]*?)(?=\n\n|procedure|medication|$)/i);
-  return diagSection ? diagSection[1].trim().substring(0, 500) : '';
-}
-
-function extractProcedure(text) {
-  var procMatch = text.match(/(?:procedure|surgery|operation)[:\s]*([\s\S]*?)(?=\n\n|diagnosis|medication|$)/i);
-  return procMatch ? procMatch[1].trim().substring(0, 500) : '';
-}
-
-function extractMedications(text) {
-  var medSection = text.match(/(?:medication|prescription|drug)[s]?[:\s]*([\s\S]*?)(?=\n\n|diagnosis|procedure|$)/i);
-  return medSection ? medSection[1].trim().split('\n').filter(function(l) { return l.trim(); }) : [];
-}
-
-function extractLabResults(text) {
-  var labSection = text.match(/(?:lab|laboratory|result|investigation)[s]?[:\s]*([\s\S]*?)(?=\n\n|diagnosis|procedure|$)/i);
-  return labSection ? labSection[1].trim().substring(0, 1000) : '';
-}
-
-function extractClinicalNotes(text) {
-  var noteSection = text.match(/(?:clinical note|history|assessment|hpi|presenting complaint)[s]?[:\s]*([\s\S]*?)(?=\n\n|diagnosis|procedure|$)/i);
-  return noteSection ? noteSection[1].trim().substring(0, 1000) : '';
-}
-
-// NICE guidelines sufficiency requirements by procedure type
-  return path.split('.').reduce(function(o, k) { return o && o[k]; }, obj);
-}
-
 function getRequiredFields(procedureType) {
   var common = [
     {path: 'patientInfo.name', label: 'Patient Name', importance: 'critical'},
