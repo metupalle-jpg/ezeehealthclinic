@@ -3,7 +3,7 @@
    ========================================================================== */
 
 // ===== DATA =====
-var API_URL = window.location.hostname === "localhost" ? "http://localhost:8080" : "https://2ndopinion-api-ezeehealthclinic.a.run.app";
+var API_URL = window.location.hostname === "localhost" ? "http://localhost:8080" : "https://secondopinion-api-24631288959.me-central1.run.app";
 var currentCaseId = "";
 var currentUploadCategory = "uncategorized";
 const VALID_INVITE_CODES = ['ezee2026!'];
