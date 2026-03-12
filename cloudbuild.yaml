@@ -10,3 +10,5 @@ steps:
     args: ['push', 'gcr.io/$PROJECT_ID/2ndopinion-api']
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ['run', 'deploy', '2ndopinion-api', '--image', 'gcr.io/$PROJECT_ID/2ndopinion-api', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated', '--set-env-vars', 'GCS_BUCKET=ezeehealthcare-2ndopinion-uploads,GCP_PROJECT=$PROJECT_ID']
+options:
+  logging: CLOUD_LOGGING_ONLY
