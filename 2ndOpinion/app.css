@@ -15,7 +15,7 @@
 .logo-text-sm { font-size: 14px; }
 .user-name { font-size: 13px; color: var(--gray-600); font-weight: 500; }
 
-.app-layout { display: flex; flex: 1; overflow: hidden; }
+.app-layout { display: flex; flex: 1; min-height: 0; }
 
 /* Sidebar */
 .sidebar {
@@ -36,7 +36,7 @@
 .sidebar-link svg { flex-shrink: 0; }
 
 /* Main Content */
-.app-main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 24px; background: var(--gray-50); }
+.app-main { min-height: 0; flex: 1; overflow-y: auto; overflow-x: hidden; padding: 24px; background: var(--gray-50); }
 
 .view { display: none; }
 .view.active { display: block; }
@@ -144,7 +144,7 @@
 .uploaded-file-actions { display: flex; gap: 6px; }
 
 /* ========== RULES ENGINE VIEW ========== */
-.rules-container { display: flex; gap: 24px; min-height: 500px; }
+.rules-layout { display: flex; gap: 24px; min-height: 500px; }
 .rules-sidebar { width: 280px; flex-shrink: 0; }
 .rules-sidebar h3 { font-size: 14px; font-weight: 600; color: var(--gray-700); margin-bottom: 12px; }
 .rules-list { display: flex; flex-direction: column; gap: 4px; }
@@ -502,7 +502,7 @@
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 900px) {
-  .rules-container { flex-direction: column; }
+  .rules-layout { flex-direction: column; }
   .rules-sidebar { width: 100%; }
   .review-split { flex-direction: column; height: auto; }
   .review-left, .review-right { min-height: 400px; }
@@ -513,7 +513,7 @@
 @media (max-width: 768px) {
   .sidebar { position: fixed; left: 0; top: 52px; bottom: 0; z-index: 40; box-shadow: var(--shadow-lg); }
   .sidebar:not(.collapsed) { width: 200px; }
-  .app-main { padding: 16px; }
+  .app-main { min-height: 0; padding: 16px; }
   .analysis-grid { grid-template-columns: 1fr; }
 }
 
