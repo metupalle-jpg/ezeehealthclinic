@@ -600,3 +600,8 @@
 .empty-state-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
 .empty-state-title { font-size: 16px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
 .empty-state-text { font-size: 14px; color: var(--gray-500); }
+/* Log type styles for AI Review and Consultant Report */
+.log-type-ai-review { background: #dbeafe; color: #1e40af; }
+.log-type-consultant-report { background: #d1fae5; color: #065f46; }
+.log-detail { font-size: 0.85em; color: #4b5563; }
+CSS

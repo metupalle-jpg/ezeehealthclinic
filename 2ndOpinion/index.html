@@ -37,7 +37,7 @@
 <section class="hero">
 <span class="hero-badge">Independent Clinical Review Platform</span>
 <h1>Evidence-Based Second Opinions for Thiqa Insurance Holders</h1>
-<p class="hero-sub">UK-trained specialist doctors review elective surgery requests using NICE clinical guidelines and AI-powered analysis — ensuring every patient gets the right care at the right time.</p>
+<p class="hero-sub">UK-trained consultant doctors review elective surgery requests using NICE clinical guidelines and AI-powered analysis — ensuring every patient gets the right care at the right time.</p>
 <div class="hero-actions"><button class="btn btn-primary btn-lg" onclick="showAuth()">Access Platform</button>
 <a href="#how-it-works" class="btn btn-outline btn-lg">Learn More</a></div>
 <div class="hero-stats">
@@ -59,7 +59,7 @@
 <div class="step"><div class="step-num">1</div><h3>Upload Clinical Documents</h3><p>Upload the patient's EMR records, lab results, imaging reports, and pre-authorisation request as PDF documents.</p></div>
 <div class="step"><div class="step-num">2</div><h3>AI Document Processing</h3><p>The system extracts and segments clinical data — demographics, diagnosis, investigations, medications, and treatment history.</p></div>
 <div class="step"><div class="step-num">3</div><h3>Rules Engine Analysis</h3><p>NICE guidelines are applied to the extracted data, checking each mandatory criterion for the requested procedure.</p></div>
-<div class="step"><div class="step-num">4</div><h3>Clinical Decision</h3><p>A structured recommendation is generated — approve, request more information, or refer for specialist review.</p></div>
+<div class="step"><div class="step-num">4</div><h3>Clinical Decision</h3><p>A structured recommendation is generated — approve, request more information, or refer for consultant review.</p></div>
 </div></section>
 <section class="guidelines-section" id="guidelines">
 <h2>Supported Guidelines</h2>
@@ -121,8 +121,8 @@
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 14l2 2 4-4"/></svg><span>Rules Engine</span></a>
 <a class="sidebar-link" data-view="review" onclick="switchView('review')">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>AI Review</span></a>
-<a class="sidebar-link" data-view="specialists" onclick="switchView('specialists')">
-<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span>Specialists</span></a>
+<a class="sidebar-link" data-view="consultants" onclick="switchView('consultants')">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span>Consultants</span></a>
 <a class="sidebar-link" data-view="logs" onclick="switchView('logs')">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Logs</span></a>
 </nav>
@@ -204,17 +204,39 @@
 <button id="apply-rules-btn" class="btn btn-primary" onclick="applyRulesEngine()">Apply NICE Guidelines Rules Engine</button></div>
 </div></div></div>
 <!-- SPECIALISTS VIEW -->
-<div id="view-specialists" class="view">
-<div class="view-header"><h1>Specialist Panel</h1><p>UK-trained consultant surgeons providing independent clinical opinions</p></div>
-<div id="specialists-grid" class="specialists-grid"></div>
+<div id="view-consultants" class="view">
+<div class="view-header"><h1>Consultant Panel</h1><p>UK-trained consultant surgeons providing independent clinical opinions</p></div>
+<div id="consultants-grid" class="consultants-grid"></div>
 </div>
 <!-- LOGS VIEW -->
 <div id="view-logs" class="view">
-<div class="view-header"><h1>Submission Logs</h1><p>Audit trail of all case assignments, opinion submissions, and notifications</p></div>
+<div class="view-header"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <h1>Submission Logs</h1>
+          <p class="view-subtitle">Audit trail of all case assignments, AI reviews, and consultant reports</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select id="log-filter-month" onchange="filterLogs()" style="padding:6px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+            <option value="">All Months</option>
+            <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+            <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+            <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+            <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+          </select>
+          <select id="log-filter-year" onchange="filterLogs()" style="padding:6px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px">
+            <option value="">All Years</option>
+            <option value="2025">2025</option><option value="2026">2026</option>
+          </select>
+          <button onclick="exportLogsPDF()" style="padding:6px 14px;background:#003366;color:white;border:none;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Export PDF
+          </button>
+        </div>
+      </div><p></p></div>
 <div class="table-wrapper"><table class="logs-table"><thead><tr>
 <th>Timestamp</th><th>Type</th><th>Case</th><th>User</th><th>Details</th>
 </tr></thead><tbody id="logs-tbody"></tbody></table></div>
-<div id="logs-empty" class="empty-state" style="display:none"><p>No activity logs yet. Assign a case to a specialist to begin.</p></div>
+<div id="logs-empty" class="empty-state" style="display:none"><p>No logs match the selected filter.</p></div>
 </div>
 </div><!-- end main-content -->
 </div><!-- end app-layout -->
@@ -225,8 +247,8 @@
 <div class="modal-header"><h2>Assign to Specialist</h2>
 <button class="modal-close" onclick="closeAssignModal()">&times;</button></div>
 <div class="modal-body">
-<p>Select a specialist to review case <strong id="assign-case-id"></strong></p>
-<div id="specialist-select-list" class="specialist-select-list"></div>
+<p>Select a consultant to review case <strong id="assign-case-id"></strong></p>
+<div id="consultant-select-list" class="consultant-select-list"></div>
 </div>
 <div class="modal-footer">
 <button class="btn btn-outline" onclick="closeAssignModal()">Cancel</button>
@@ -238,13 +260,13 @@
 <div class="modal-header"><h2>Submit 2nd Opinion</h2>
 <button class="modal-close" onclick="closeOpinionModal()">&times;</button></div>
 <div class="modal-body">
-<div class="specialist-case-header">
+<div class="consultant-case-header">
 <span id="opinion-case-id" class="badge badge-blue"></span>
-<span id="opinion-specialist-name"></span></div>
-<div class="specialist-case-tabs">
-<button class="specialist-tab active" onclick="switchOpinionTab('form',this)">Opinion Form</button>
-<button class="specialist-tab" onclick="switchOpinionTab('case-info',this)">Case Info</button></div>
-<div id="opinion-tab-form" class="specialist-tab-content active">
+<span id="opinion-consultant-name"></span></div>
+<div class="consultant-case-tabs">
+<button class="consultant-tab active" onclick="switchOpinionTab('form',this)">Opinion Form</button>
+<button class="consultant-tab" onclick="switchOpinionTab('case-info',this)">Case Info</button></div>
+<div id="opinion-tab-form" class="consultant-tab-content active">
 <form class="opinion-form" onsubmit="submitOpinion(event)">
 <div class="form-group"><label class="opinion-label">Clinical Assessment</label>
 <textarea class="opinion-textarea" id="opinion-assessment" rows="4" placeholder="Enter your clinical assessment..." required></textarea></div>
@@ -262,7 +284,7 @@
 <button type="button" class="btn btn-outline" onclick="closeOpinionModal()">Cancel</button>
 <button type="submit" class="btn btn-primary">Submit Opinion</button></div>
 </form></div>
-<div id="opinion-tab-case-info" class="specialist-tab-content">
+<div id="opinion-tab-case-info" class="consultant-tab-content">
 <div id="opinion-case-details"></div></div>
 </div></div></div>
 <!-- ========== REPORT MODAL ========== -->

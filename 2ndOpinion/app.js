@@ -124,7 +124,7 @@ const CASES = [
       { rule: 'TON-02', name: 'Clinical Documentation', pass: true, detail: 'Each episode documented with examination findings and FeverPAIN scoring. Positive Group A Strep on 5 of 8 episodes (culture confirmed).' },
       { rule: 'TON-03', name: 'Adequate Treatment', pass: true, detail: 'Full antibiotic courses (Amoxicillin/Azithromycin) documented for each episode via pharmacy records. Compliance confirmed.' },
       { rule: 'TON-04', name: 'Fast-Track: Obstructive Sleep Apnoea', pass: true, detail: 'QUALIFIES FOR FAST-TRACK: Obstructive sleep apnoea with tonsil enlargement (Grade 4 kissing tonsils). PSG: AHI 6.2, nadir SpO2 86%. Auto-approve pathway applicable.' },
-      { rule: 'TON-06', name: 'Specialist Assessment', pass: true, detail: 'ENT specialist letter documenting failure of conservative management and surgical recommendation present in records.' }
+      { rule: 'TON-06', name: 'Consultant Assessment', pass: true, detail: 'ENT consultant letter documenting failure of conservative management and surgical recommendation present in records.' }
     ],
     recommendation: {
       type: 'approve',
@@ -241,7 +241,7 @@ const GUIDELINES = {
     { id: 'TON-03', category: 'Adequate Treatment', severity: 'MANDATORY', desc: 'Documented adequate antibiotic treatment for each episode with compliance confirmed.' },
     { id: 'TON-04', category: 'Fast-Track Approval', severity: 'FAST_TRACK', desc: 'Auto-approve: Obstructive sleep apnoea with tonsil enlargement, suspected tonsillar malignancy, recurrent peritonsillar abscess (≥2), severe immunodeficiency.' },
     { id: 'TON-05', category: 'Do NOT Approve', severity: 'EXCLUSION', desc: 'Halitosis alone; non-clinically-documented sore throats; parental preference without clinical criteria; episodes resolved spontaneously.' },
-    { id: 'TON-06', category: 'Specialist Assessment', severity: 'MANDATORY', desc: 'GP records or specialist letters confirming episode documentation mandatory.' }
+    { id: 'TON-06', category: 'Consultant Assessment', severity: 'MANDATORY', desc: 'GP records or consultant letters confirming episode documentation mandatory.' }
   ]},
   spinal_surgery: { id: 'NICE-NG59', title: 'Spinal Surgery', subtitle: 'Low Back Pain and Sciatica in Over 16s', year: 2016, rules: [
     { id: 'SPI-01', category: 'Conservative Management', severity: 'MANDATORY', desc: 'Minimum 6 weeks structured conservative management (physiotherapy programme) documented.' },
@@ -250,7 +250,7 @@ const GUIDELINES = {
     { id: 'SPI-04', category: 'Cauda Equina Syndrome', severity: 'EMERGENCY', desc: 'Cauda equina syndrome: EMERGENCY — bypasses prior authorisation entirely.' },
     { id: 'SPI-05', category: 'Radiological Confirmation', severity: 'MANDATORY', desc: 'MRI confirmation with clinical correlation mandatory. NOT for incidental MRI findings without clinical signs.' },
     { id: 'SPI-06', category: 'Waddell Signs', severity: 'MANDATORY', desc: 'Waddell sign assessment: psychosocial factors predict poor surgical outcome. Exclusion of occupational/psychosocial contributors required.' },
-    { id: 'SPI-07', category: 'MDT Review', severity: 'MANDATORY', desc: 'Mandatory: spinal surgeon + physiotherapist + pain specialist review.' },
+    { id: 'SPI-07', category: 'MDT Review', severity: 'MANDATORY', desc: 'Mandatory: spinal surgeon + physiotherapist + pain consultant review.' },
     { id: 'SPI-08', category: 'Fusion Restrictions', severity: 'MANDATORY', desc: 'Spinal fusion ONLY for: structural instability, deformity correction, post-decompression instability. NOT for mechanical low back pain alone.' }
   ]},
   elective_pci: { id: 'NICE-CG126', title: 'Elective PCI', subtitle: 'Stable Angina: Management', year: 2011, rules: [
@@ -638,6 +638,67 @@ function applyRulesEngine() {
   document.addEventListener('mouseup', function() { isResizing = false; document.body.style.cursor = ''; document.body.style.userSelect = ''; });
 })();
 
+
+// ===== LOG FILTER & EXPORT =====
+function filterLogs() {
+  var month = document.getElementById('log-filter-month') ? document.getElementById('log-filter-month').value : '';
+  var year = document.getElementById('log-filter-year') ? document.getElementById('log-filter-year').value : '';
+  var tbody = document.getElementById('logs-tbody');
+  var empty = document.getElementById('logs-empty');
+  if (!tbody) return;
+  var filtered = activityLogs.filter(function(log) {
+    if (month && log.timestamp.slice(5,7) !== month) return false;
+    if (year && log.timestamp.slice(0,4) !== year) return false;
+    return true;
+  });
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    if (empty) { empty.style.display = 'flex'; empty.querySelector('p').textContent = 'No logs match the selected filter.'; }
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(function(log) {
+    var typeClass = 'log-type log-type-' + log.type;
+    var typeLabel = log.type.replace(/-/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+    return '<tr>' +
+      '<td>' + log.timestamp + '</td>' +
+      '<td><span class="' + typeClass + '">' + typeLabel + '</span></td>' +
+      '<td>' + log.caseId + '</td>' +
+      '<td>' + log.user + '</td>' +
+      '<td><span class="log-detail">' + log.details + '</span></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function exportLogsPDF() {
+  var month = document.getElementById('log-filter-month') ? document.getElementById('log-filter-month').value : '';
+  var year = document.getElementById('log-filter-year') ? document.getElementById('log-filter-year').value : '';
+  var filtered = activityLogs.filter(function(log) {
+    if (month && log.timestamp.slice(5,7) !== month) return false;
+    if (year && log.timestamp.slice(0,4) !== year) return false;
+    return true;
+  });
+  var title = 'EzeeHealth 2nd Opinion - Activity Logs';
+  if (month || year) title += ' (' + (month ? 'Month: ' + month : '') + (month && year ? ', ' : '') + (year ? 'Year: ' + year : '') + ')';
+  var rows = filtered.map(function(log) {
+    return '<tr><td style="border:1px solid #ccc;padding:4px;font-size:11px">' + log.timestamp + '</td>' +
+      '<td style="border:1px solid #ccc;padding:4px;font-size:11px">' + log.type.replace(/-/g,' ') + '</td>' +
+      '<td style="border:1px solid #ccc;padding:4px;font-size:11px">' + log.caseId + '</td>' +
+      '<td style="border:1px solid #ccc;padding:4px;font-size:11px">' + log.user + '</td>' +
+      '<td style="border:1px solid #ccc;padding:4px;font-size:11px">' + log.details + '</td></tr>';
+  }).join('');
+  var html = '<html><head><title>' + title + '</title></head><body>' +
+    '<h2 style="color:#003366;font-family:sans-serif">' + title + '</h2>' +
+    '<p style="font-family:sans-serif;color:#666">Generated: ' + new Date().toISOString().slice(0,19).replace('T',' ') + ' | Total: ' + filtered.length + ' logs</p>' +
+    '<table style="border-collapse:collapse;width:100%;font-family:sans-serif">' +
+    '<tr style="background:#003366;color:white"><th style="border:1px solid #ccc;padding:6px">Timestamp</th><th style="border:1px solid #ccc;padding:6px">Type</th><th style="border:1px solid #ccc;padding:6px">Case</th><th style="border:1px solid #ccc;padding:6px">User</th><th style="border:1px solid #ccc;padding:6px">Details</th></tr>' +
+    rows + '</table></body></html>';
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  setTimeout(function() { w.print(); }, 500);
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
   // Close sidebar on mobile by default
@@ -652,71 +713,148 @@ const SPECIALISTS = [
   { id: 'SP-002', name: 'Dr. James Crawford', initials: 'JC', specialty: 'Ophthalmology', qualifications: 'FRCOphth, GMC #6891234', experience: '22 years', location: 'Manchester, UK', status: 'available', matchTypes: ['Cataract Surgery'] },
   { id: 'SP-003', name: 'Dr. Priya Sharma', initials: 'PS', specialty: 'ENT Surgery', qualifications: 'FRCS (ORL-HNS), GMC #7456123', experience: '15 years', location: 'Birmingham, UK', status: 'available', matchTypes: ['Tonsillectomy'] },
   { id: 'SP-004', name: 'Dr. Andrew Bennett', initials: 'AB', specialty: 'Spinal Surgery', qualifications: 'FRCS (Orth), GMC #6543217', experience: '20 years', location: 'Leeds, UK', status: 'available', matchTypes: ['Spinal Surgery'] },
-  { id: 'SP-005', name: 'Dr. Fatima Al-Hassan', initials: 'FA', specialty: 'Interventional Cardiology', qualifications: 'FRCP, GMC #7891234', experience: '16 years', location: 'Edinburgh, UK', status: 'available', matchTypes: ['Elective PCI'] }
+  { id: 'SP-005', name: 'Dr. Fatima Al-Hassan', initials: 'FA', specialty: 'Interventional Cardiology', qualifications: 'FRCP, GMC #7891234', experience: '16 years', location: 'Edinburgh, UK', status: 'available', matchTypes: ['Elective PCI'] },
+  { id: 'SP-006', name: 'Dr. Oliver Whitfield', initials: 'OW', specialty: 'Orthopaedic Surgery', qualifications: 'FRCS (Orth), GMC #7123456', experience: '19 years', location: 'Bristol, UK', status: 'available', matchTypes: ['Hip Replacement', 'Knee Replacement'] },
+  { id: 'SP-007', name: 'Dr. Amelia Rhodes', initials: 'AR', specialty: 'General Surgery', qualifications: 'FRCS, GMC #6789012', experience: '14 years', location: 'Liverpool, UK', status: 'available', matchTypes: ['Cholecystectomy', 'Hernia Repair'] },
+  { id: 'SP-008', name: 'Dr. Thomas Hargreaves', initials: 'TH', specialty: 'Bariatric Surgery', qualifications: 'FRCS, GMC #7456789', experience: '21 years', location: 'Sheffield, UK', status: 'available', matchTypes: ['Bariatric Surgery'] },
+  { id: 'SP-009', name: 'Dr. Natasha Patel', initials: 'NP', specialty: 'Endocrine Surgery', qualifications: 'FRCS, GMC #6234567', experience: '16 years', location: 'Nottingham, UK', status: 'available', matchTypes: ['Thyroid Surgery'] },
+  { id: 'SP-010', name: 'Dr. Edward Forsythe', initials: 'EF', specialty: 'Spinal Surgery', qualifications: 'FRCS (Neuro), GMC #7890123', experience: '23 years', location: 'Newcastle, UK', status: 'available', matchTypes: ['Spinal Surgery'] },
+  { id: 'SP-011', name: 'Dr. Charlotte Brennan', initials: 'CB', specialty: 'Ophthalmology', qualifications: 'FRCOphth, GMC #6567890', experience: '17 years', location: 'Cardiff, UK', status: 'available', matchTypes: ['Cataract Surgery'] },
+  { id: 'SP-012', name: 'Dr. Samuel Okafor', initials: 'SO', specialty: 'Cardiothoracic Surgery', qualifications: 'FRCS (CTh), GMC #7234890', experience: '20 years', location: 'Glasgow, UK', status: 'available', matchTypes: ['Elective PCI'] },
+  { id: 'SP-013', name: 'Dr. Helena Vasquez', initials: 'HV', specialty: 'ENT Surgery', qualifications: 'FRCS (ORL), GMC #6901234', experience: '13 years', location: 'Southampton, UK', status: 'available', matchTypes: ['Tonsillectomy'] },
+  { id: 'SP-014', name: 'Dr. Marcus Lindqvist', initials: 'ML', specialty: 'Orthopaedic Surgery', qualifications: 'FRCS (Orth), GMC #7678901', experience: '18 years', location: 'Cambridge, UK', status: 'available', matchTypes: ['Hip Replacement', 'Knee Replacement'] },
+  { id: 'SP-015', name: 'Dr. Isabelle Monet', initials: 'IM', specialty: 'Bariatric Surgery', qualifications: 'FRCS, GMC #6345678', experience: '15 years', location: 'Oxford, UK', status: 'available', matchTypes: ['Bariatric Surgery'] },
+  { id: 'SP-016', name: 'Dr. Alistair Drummond', initials: 'AD', specialty: 'Vascular Surgery', qualifications: 'FRCS (Vasc), GMC #7012345', experience: '24 years', location: 'Edinburgh, UK', status: 'available', matchTypes: ['Hernia Repair'] },
+  { id: 'SP-017', name: 'Dr. Sophia Karimian', initials: 'SK', specialty: 'Interventional Cardiology', qualifications: 'FRCP, GMC #6789456', experience: '12 years', location: 'London, UK', status: 'available', matchTypes: ['Elective PCI'] },
+  { id: 'SP-018', name: 'Dr. Rupert Ashworth', initials: 'RA', specialty: 'Spinal Surgery', qualifications: 'FRCS (Orth), GMC #7456012', experience: '22 years', location: 'Leeds, UK', status: 'available', matchTypes: ['Spinal Surgery'] },
+  { id: 'SP-019', name: 'Dr. Mei-Ling Chen', initials: 'MC', specialty: 'Ophthalmology', qualifications: 'FRCOphth, GMC #6123789', experience: '11 years', location: 'Manchester, UK', status: 'available', matchTypes: ['Cataract Surgery'] },
+  { id: 'SP-020', name: 'Dr. Benjamin Osei', initials: 'BO', specialty: 'General Surgery', qualifications: 'FRCS, GMC #7890456', experience: '16 years', location: 'Birmingham, UK', status: 'available', matchTypes: ['Cholecystectomy', 'Hernia Repair'] },
+  { id: 'SP-021', name: 'Dr. Francesca Moretti', initials: 'FM', specialty: 'ENT Surgery', qualifications: 'FRCS (ORL), GMC #6567123', experience: '14 years', location: 'Bristol, UK', status: 'available', matchTypes: ['Tonsillectomy'] },
+  { id: 'SP-022', name: 'Dr. Jonathan Blackwell', initials: 'JB', specialty: 'Bariatric Surgery', qualifications: 'FRCS, GMC #7234567', experience: '19 years', location: 'Liverpool, UK', status: 'available', matchTypes: ['Bariatric Surgery'] },
+  { id: 'SP-023', name: 'Dr. Ayesha Noor', initials: 'AN', specialty: 'Endocrine Surgery', qualifications: 'FRCS, GMC #6901567', experience: '13 years', location: 'Sheffield, UK', status: 'available', matchTypes: ['Thyroid Surgery'] },
+  { id: 'SP-024', name: 'Dr. Patrick O Sullivan', initials: 'PO', specialty: 'Orthopaedic Surgery', qualifications: 'FRCS (Orth), GMC #7678234', experience: '17 years', location: 'Nottingham, UK', status: 'available', matchTypes: ['Hip Replacement', 'Knee Replacement'] },
+  { id: 'SP-025', name: 'Dr. Diana Kowalski', initials: 'DK', specialty: 'Cardiothoracic Surgery', qualifications: 'FRCS (CTh), GMC #6345901', experience: '20 years', location: 'Newcastle, UK', status: 'available', matchTypes: ['Elective PCI'] },
+  { id: 'SP-026', name: 'Dr. Lawrence Mensah', initials: 'LM', specialty: 'Spinal Surgery', qualifications: 'FRCS (Neuro), GMC #7012678', experience: '18 years', location: 'Cardiff, UK', status: 'available', matchTypes: ['Spinal Surgery'] },
+  { id: 'SP-027', name: 'Dr. Ingrid Svensson', initials: 'IS', specialty: 'Ophthalmology', qualifications: 'FRCOphth, GMC #6789234', experience: '15 years', location: 'Glasgow, UK', status: 'available', matchTypes: ['Cataract Surgery'] },
+  { id: 'SP-028', name: 'Dr. Callum Fraser', initials: 'CF', specialty: 'General Surgery', qualifications: 'FRCS, GMC #7456345', experience: '21 years', location: 'Southampton, UK', status: 'available', matchTypes: ['Cholecystectomy', 'Hernia Repair'] },
+  { id: 'SP-029', name: 'Dr. Zara Hutchinson', initials: 'ZH', specialty: 'ENT Surgery', qualifications: 'FRCS (ORL), GMC #6123456', experience: '10 years', location: 'Cambridge, UK', status: 'available', matchTypes: ['Tonsillectomy'] },
+  { id: 'SP-030', name: 'Dr. Victor Adeyemi', initials: 'VA', specialty: 'Interventional Cardiology', qualifications: 'FRCP, GMC #7890789', experience: '25 years', location: 'Oxford, UK', status: 'available', matchTypes: ['Elective PCI'] }
+
 ];
 
 let assignments = {};
 let opinions = {};
-let activityLogs = [];
+let activityLogs = [
+  { timestamp: '2026-03-13 13:29:00', type: 'ai-review', caseId: 'ICR-2026-007', user: 'AI Engine', details: 'AI rules engine analysis: 6/7 rules passed' },
+  { timestamp: '2025-09-04 13:06:00', type: 'ai-review', caseId: 'ICR-2026-002', user: 'AI Engine', details: 'AI rules engine analysis: 6/7 rules passed' },
+  { timestamp: '2025-08-02 12:09:00', type: 'opinion-submission', caseId: 'ICR-2026-004', user: 'Dr. Sarah Mitchell', details: 'System notification: Case status updated to Reviewed' },
+  { timestamp: '2026-03-02 18:09:00', type: 'assignment', caseId: 'ICR-2026-010', user: 'Dr. Priya Sharma', details: 'System notification: Case status updated to Reviewed' },
+  { timestamp: '2026-03-06 08:27:00', type: 'consultant-report', caseId: 'ICR-2026-007', user: 'Dr. Fatima Al-Hassan', details: 'Consultant report submitted: Recommend Approval' },
+  { timestamp: '2025-11-03 14:07:00', type: 'opinion-submission', caseId: 'ICR-2026-001', user: 'Dr. Priya Sharma', details: 'New consultant report available for admin review' },
+  { timestamp: '2025-08-24 15:05:00', type: 'assignment', caseId: 'ICR-2026-001', user: 'Dr. Fatima Al-Hassan', details: 'New consultant report available for admin review' },
+  { timestamp: '2026-02-07 15:17:00', type: 'ai-review', caseId: 'ICR-2026-010', user: 'AI Engine', details: 'AI rules engine analysis: 6/7 rules passed' },
+  { timestamp: '2025-12-04 17:17:00', type: 'ai-review', caseId: 'ICR-2026-007', user: 'AI Engine', details: 'AI review completed: 92% NICE compliance' },
+  { timestamp: '2026-02-19 15:29:00', type: 'ai-review', caseId: 'ICR-2026-003', user: 'AI Engine', details: 'AI review flagged: Missing pre-operative investigations' },
+  { timestamp: '2025-05-15 17:51:00', type: 'opinion-submission', caseId: 'ICR-2026-005', user: 'Dr. Fatima Al-Hassan', details: 'Case reassigned due to consultant availability' },
+  { timestamp: '2025-07-06 16:46:00', type: 'ai-review', caseId: 'ICR-2026-005', user: 'AI Engine', details: 'AI review completed: 92% NICE compliance' },
+  { timestamp: '2025-04-06 12:58:00', type: 'consultant-report', caseId: 'ICR-2026-004', user: 'Dr. Natasha Patel', details: 'Consultant report submitted: Recommend Approval' },
+  { timestamp: '2025-08-20 15:50:00', type: 'consultant-report', caseId: 'ICR-2026-006', user: 'Dr. Charlotte Brennan', details: 'Consultant report submitted: Approve with conditions' },
+  { timestamp: '2025-12-21 12:04:00', type: 'admin-notification', caseId: 'ICR-2026-009', user: 'Dr. James Crawford', details: 'Case assigned to consultant for review' },
+  { timestamp: '2025-11-25 10:33:00', type: 'ai-review', caseId: 'ICR-2026-003', user: 'AI Engine', details: 'AI review completed: 85% NICE compliance' },
+  { timestamp: '2025-10-25 10:15:00', type: 'admin-notification', caseId: 'ICR-2026-004', user: 'Dr. Priya Sharma', details: 'Case reassigned due to consultant availability' },
+  { timestamp: '2025-06-25 12:41:00', type: 'consultant-report', caseId: 'ICR-2026-005', user: 'Dr. Andrew Bennett', details: 'Consultant report submitted: Approve - all NICE criteria satisfied' },
+  { timestamp: '2025-09-27 18:02:00', type: 'ai-review', caseId: 'ICR-2026-007', user: 'AI Engine', details: 'AI review completed: 95% compliance - minor documentation gap' },
+  { timestamp: '2025-09-22 13:30:00', type: 'consultant-report', caseId: 'ICR-2026-003', user: 'Dr. Samuel Okafor', details: 'Consultant report: MDT confirmation received, approve' },
+  { timestamp: '2025-11-19 09:58:00', type: 'consultant-report', caseId: 'ICR-2026-002', user: 'Dr. Edward Forsythe', details: 'Consultant report submitted: Request additional imaging' },
+  { timestamp: '2026-01-20 11:49:00', type: 'ai-review', caseId: 'ICR-2026-008', user: 'AI Engine', details: 'AI review completed: 85% NICE compliance' },
+  { timestamp: '2026-01-11 11:32:00', type: 'ai-review', caseId: 'ICR-2026-008', user: 'AI Engine', details: 'AI review completed: 92% NICE compliance' },
+  { timestamp: '2026-02-01 13:04:00', type: 'consultant-report', caseId: 'ICR-2026-004', user: 'Dr. James Crawford', details: 'Consultant report: MDT confirmation received, approve' },
+  { timestamp: '2025-10-06 13:37:00', type: 'admin-notification', caseId: 'ICR-2026-009', user: 'Dr. Admin', details: 'Case assigned to consultant for review' },
+  { timestamp: '2025-10-07 12:53:00', type: 'ai-review', caseId: 'ICR-2026-005', user: 'AI Engine', details: 'AI review flagged: Conservative management duration insufficient' },
+  { timestamp: '2025-08-24 09:08:00', type: 'assignment', caseId: 'ICR-2026-001', user: 'Dr. James Crawford', details: 'Case assigned to consultant for review' },
+  { timestamp: '2026-02-09 14:56:00', type: 'ai-review', caseId: 'ICR-2026-009', user: 'AI Engine', details: 'AI review completed: 95% compliance - minor documentation gap' },
+  { timestamp: '2025-07-07 18:27:00', type: 'ai-review', caseId: 'ICR-2026-003', user: 'AI Engine', details: 'AI review completed: 85% NICE compliance' },
+  { timestamp: '2026-02-24 18:03:00', type: 'consultant-report', caseId: 'ICR-2026-008', user: 'Dr. Edward Forsythe', details: 'Consultant report submitted: Deny - criteria not met' },
+  { timestamp: '2025-04-10 12:45:00', type: 'consultant-report', caseId: 'ICR-2026-006', user: 'Dr. Andrew Bennett', details: 'Consultant report: MDT confirmation received, approve' },
+  { timestamp: '2025-12-04 14:06:00', type: 'opinion-submission', caseId: 'ICR-2026-007', user: 'Dr. Sarah Mitchell', details: 'System notification: Case status updated to Reviewed' },
+  { timestamp: '2025-08-02 17:22:00', type: 'consultant-report', caseId: 'ICR-2026-008', user: 'Dr. James Crawford', details: 'Consultant report submitted: Approve with conditions' },
+  { timestamp: '2025-08-18 11:38:00', type: 'consultant-report', caseId: 'ICR-2026-007', user: 'Dr. Andrew Bennett', details: 'Consultant report submitted: Approve - all NICE criteria satisfied' },
+  { timestamp: '2025-12-19 17:35:00', type: 'consultant-report', caseId: 'ICR-2026-006', user: 'Dr. Thomas Hargreaves', details: 'Consultant report submitted: Request More Information' },
+  { timestamp: '2025-09-07 18:54:00', type: 'consultant-report', caseId: 'ICR-2026-003', user: 'Dr. Samuel Okafor', details: 'Consultant report submitted: Deny - criteria not met' },
+  { timestamp: '2026-01-27 17:48:00', type: 'opinion-submission', caseId: 'ICR-2026-006', user: 'Dr. Admin', details: 'New consultant report available for admin review' },
+  { timestamp: '2025-06-03 13:05:00', type: 'consultant-report', caseId: 'ICR-2026-002', user: 'Dr. Thomas Hargreaves', details: 'Consultant report: MDT confirmation received, approve' },
+  { timestamp: '2025-10-08 10:44:00', type: 'ai-review', caseId: 'ICR-2026-002', user: 'AI Engine', details: 'AI review flagged: Missing pre-operative investigations' },
+  { timestamp: '2026-01-22 17:16:00', type: 'ai-review', caseId: 'ICR-2026-006', user: 'AI Engine', details: 'AI review completed: Fast-track pathway triggered' },
+  { timestamp: '2026-03-24 14:14:00', type: 'admin-notification', caseId: 'ICR-2026-005', user: 'Dr. Sarah Mitchell', details: 'Case assigned to consultant for review' },
+  { timestamp: '2026-02-17 18:19:00', type: 'admin-notification', caseId: 'ICR-2026-001', user: 'Dr. James Crawford', details: 'System notification: Case status updated to Reviewed' },
+  { timestamp: '2026-02-17 17:17:00', type: 'ai-review', caseId: 'ICR-2026-010', user: 'AI Engine', details: 'AI review completed: 85% NICE compliance' },
+  { timestamp: '2026-03-04 09:02:00', type: 'ai-review', caseId: 'ICR-2026-002', user: 'AI Engine', details: 'AI review completed: All mandatory criteria met' },
+  { timestamp: '2026-02-17 11:12:00', type: 'consultant-report', caseId: 'ICR-2026-004', user: 'Dr. Priya Sharma', details: 'Consultant report: MDT confirmation received, approve' },
+  { timestamp: '2026-03-25 08:43:00', type: 'admin-notification', caseId: 'ICR-2026-004', user: 'Dr. Sarah Mitchell', details: 'Opinion submitted: Approve' },
+  { timestamp: '2026-02-02 10:25:00', type: 'consultant-report', caseId: 'ICR-2026-001', user: 'Dr. Amelia Rhodes', details: 'Consultant report submitted: Request additional imaging' },
+  { timestamp: '2026-02-20 09:50:00', type: 'assignment', caseId: 'ICR-2026-003', user: 'System', details: 'Case reassigned due to consultant availability' },
+  { timestamp: '2026-01-14 16:06:00', type: 'ai-review', caseId: 'ICR-2026-004', user: 'AI Engine', details: 'AI review flagged: Missing pre-operative investigations' },
+  { timestamp: '2026-01-21 11:20:00', type: 'consultant-report', caseId: 'ICR-2026-008', user: 'Dr. Priya Sharma', details: 'Consultant report submitted: Approve with conditions' }
+];
 
 // ===== RENDER SPECIALISTS =====
-function renderSpecialists() {
-  var grid = document.getElementById('specialists-grid');
+function renderConsultants() {
+  var grid = document.getElementById('consultants-grid');
   if (!grid) return;
   grid.innerHTML = SPECIALISTS.map(function(s) {
     var assignedCases = Object.keys(assignments).filter(function(k) { return assignments[k] === s.id; });
-    return '<div class="specialist-card">' +
-      '<div class="specialist-card-header">' +
-      '<div class="specialist-avatar">' + s.initials + '</div>' +
-      '<div><div class="specialist-option-name">' + s.name + '</div>' +
-      '<div class="specialist-option-detail">' + s.specialty + '</div></div>' +
-      '<span class="specialist-status available">Available</span></div>' +
-      '<div class="specialist-detail-row"><span>Qualifications</span><span>' + s.qualifications + '</span></div>' +
-      '<div class="specialist-detail-row"><span>Experience</span><span>' + s.experience + '</span></div>' +
-      '<div class="specialist-detail-row"><span>Location</span><span>' + s.location + '</span></div>' +
-      '<div class="specialist-detail-row"><span>Assigned Cases</span><span>' + assignedCases.length + '</span></div>' +
+    return '<div class="consultant-card">' +
+      '<div class="consultant-card-header">' +
+      '<div class="consultant-avatar">' + s.initials + '</div>' +
+      '<div><div class="consultant-option-name">' + s.name + '</div>' +
+      '<div class="consultant-option-detail">' + s.specialty + '</div></div>' +
+      '<span class="consultant-status available">Available</span></div>' +
+      '<div class="consultant-detail-row"><span>Qualifications</span><span>' + s.qualifications + '</span></div>' +
+      '<div class="consultant-detail-row"><span>Experience</span><span>' + s.experience + '</span></div>' +
+      '<div class="consultant-detail-row"><span>Location</span><span>' + s.location + '</span></div>' +
+      '<div class="consultant-detail-row"><span>Assigned Cases</span><span>' + assignedCases.length + '</span></div>' +
       '</div>';
   }).join('');
 }
 
 // ===== ASSIGNMENT MODAL =====
 var pendingAssignCaseId = null;
-var selectedSpecialistId = null;
+var selectedConsultantId = null;
 
 function openAssignModal(caseId) {
   pendingAssignCaseId = caseId;
-  selectedSpecialistId = null;
+  selectedConsultantId = null;
   document.getElementById('assign-case-id').textContent = caseId;
   document.getElementById('confirm-assign-btn').disabled = true;
   var c = CASES.find(function(x) { return x.id === caseId; });
-  var list = document.getElementById('specialist-select-list');
+  var list = document.getElementById('consultant-select-list');
   list.innerHTML = SPECIALISTS.map(function(s) {
     var isMatch = s.matchTypes.indexOf(c.type) >= 0;
-    var cls = 'specialist-option' + (isMatch ? ' recommended' : '');
+    var cls = 'consultant-option' + (isMatch ? ' recommended' : '');
     return '<label class="' + cls + '">' +
-      '<input type="radio" name="specialist-select" value="' + s.id + '" onchange="selectSpecialist(this.value)">' +
-      '<div class="specialist-avatar">' + s.initials + '</div>' +
-      '<div><div class="specialist-option-name">' + s.name + (isMatch ? ' <span class="match-badge">Best Match</span>' : '') + '</div>' +
-      '<div class="specialist-option-detail">' + s.specialty + ' &middot; ' + s.experience + '</div></div></label>';
+      '<input type="radio" name="consultant-select" value="' + s.id + '" onchange="selectConsultant(this.value)">' +
+      '<div class="consultant-avatar">' + s.initials + '</div>' +
+      '<div><div class="consultant-option-name">' + s.name + (isMatch ? ' <span class="match-badge">Best Match</span>' : '') + '</div>' +
+      '<div class="consultant-option-detail">' + s.specialty + ' &middot; ' + s.experience + '</div></div></label>';
   }).join('');
   var modal = document.getElementById('assign-modal');
   modal.style.display = 'flex';
   setTimeout(function() { modal.classList.add('visible'); }, 10);
 }
 
-function selectSpecialist(id) {
-  selectedSpecialistId = id;
+function selectConsultant(id) {
+  selectedConsultantId = id;
   document.getElementById('confirm-assign-btn').disabled = false;
 }
 
 function confirmAssignment() {
-  if (!pendingAssignCaseId || !selectedSpecialistId) return;
-  assignments[pendingAssignCaseId] = selectedSpecialistId;
-  var specialist = SPECIALISTS.find(function(s) { return s.id === selectedSpecialistId; });
-  addLog('assignment', pendingAssignCaseId, currentUser ? currentUser.name : 'Admin', 'Assigned to ' + specialist.name + ' (' + specialist.specialty + ')');
+  if (!pendingAssignCaseId || !selectedConsultantId) return;
+  assignments[pendingAssignCaseId] = selectedConsultantId;
+  var consultant = SPECIALISTS.find(function(s) { return s.id === selectedConsultantId; });
+  addLog('assignment', pendingAssignCaseId, currentUser ? currentUser.name : 'Admin', 'Assigned to ' + consultant.name + ' (' + consultant.specialty + ')');
   closeAssignModal();
   renderCases();
-  renderSpecialists();
+  renderConsultants();
   renderLogs();
 }
 
@@ -736,7 +874,7 @@ function openOpinionModal(caseId) {
   var specId = assignments[caseId];
   var spec = SPECIALISTS.find(function(s) { return s.id === specId; });
   document.getElementById('opinion-case-id').textContent = caseId;
-  document.getElementById('opinion-specialist-name').textContent = spec ? spec.name : '';
+  document.getElementById('opinion-consultant-name').textContent = spec ? spec.name : '';
   document.getElementById('opinion-assessment').value = '';
   document.getElementById('opinion-recommendation').value = '';
   document.getElementById('opinion-notes').value = '';
@@ -751,9 +889,9 @@ function openOpinionModal(caseId) {
 }
 
 function switchOpinionTab(tab, el) {
-  document.querySelectorAll('.specialist-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.consultant-tab').forEach(function(t) { t.classList.remove('active'); });
   if (el) el.classList.add('active');
-  document.querySelectorAll('.specialist-tab-content').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.consultant-tab-content').forEach(function(t) { t.classList.remove('active'); });
   document.getElementById('opinion-tab-' + tab).classList.add('active');
 }
 
@@ -767,7 +905,7 @@ function submitOpinion(e) {
   if (c) c.status = 'reviewed';
   var specId = assignments[currentOpinionCaseId];
   var spec = SPECIALISTS.find(function(s) { return s.id === specId; });
-  addLog('opinion-submission', currentOpinionCaseId, spec ? spec.name : 'Specialist', 'Opinion submitted: ' + recommendation);
+  addLog('opinion-submission', currentOpinionCaseId, spec ? spec.name : 'Consultant', 'Opinion submitted: ' + recommendation);
   addLog('admin-notification', currentOpinionCaseId, 'System', 'New opinion available for review');
   closeOpinionModal();
   renderCases();
@@ -796,6 +934,7 @@ function renderLogs() {
   var tbody = document.getElementById('logs-tbody');
   var empty = document.getElementById('logs-empty');
   if (!tbody) return;
+  activityLogs.sort(function(a,b) { return b.timestamp.localeCompare(a.timestamp); });
   if (activityLogs.length === 0) {
     tbody.innerHTML = '';
     if (empty) empty.style.display = 'flex';
@@ -826,9 +965,9 @@ function openReport(caseId) {
     '<p><strong>Case:</strong> ' + c.id + ' | <strong>Date:</strong> ' + c.date + '</p>' +
     '<p><strong>Patient:</strong> ' + c.patient + ' | <strong>Procedure:</strong> ' + c.procedure + '</p>' +
     '<p><strong>Facility:</strong> ' + c.facility + '</p>' +
-    (spec ? '<p><strong>Reviewing Specialist:</strong> ' + spec.name + ' (' + spec.specialty + ')</p>' : '') +
+    (spec ? '<p><strong>Reviewing Consultant:</strong> ' + spec.name + ' (' + spec.specialty + ')</p>' : '') +
     '</div>' +
-    (op ? '<div class="report-opinion"><h4>Specialist Opinion</h4>' +
+    (op ? '<div class="report-opinion"><h4>Consultant Opinion</h4>' +
     '<p><strong>Recommendation:</strong> ' + op.recommendation + '</p>' +
     '<p><strong>Assessment:</strong> ' + op.assessment + '</p>' +
     (op.notes ? '<p><strong>Notes:</strong> ' + op.notes + '</p>' : '') +
@@ -859,7 +998,7 @@ function printReport() {
 var _originalShowApp = showApp;
 showApp = function() {
   _originalShowApp();
-  renderSpecialists();
+  renderConsultants();
   renderLogs();
 };
 
