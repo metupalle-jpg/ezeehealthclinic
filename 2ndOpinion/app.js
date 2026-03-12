@@ -406,7 +406,7 @@ function renderCases() {
       '<td>' + c.facility + '</td>' +
       '<td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>' +
       '<td>' + c.date + '</td>' +
-      '<td><button class="btn-view-case" onclick="openCaseReview(''' + c.id + '\'')"> AI Review</button></td>' +
+          "<td><button class='btn-view-case' onclick='openCaseReview(" + c.id + ")'> AI Review</button></td>" +
       '</tr>';
   }).join('');
 }
