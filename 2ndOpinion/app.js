@@ -451,12 +451,15 @@ function addUploadedFile(file) {
     formData.append("file", file);
     formData.append("caseId", currentCaseId || "unknown");
     formData.append("category", currentUploadCategory || "uncategorized");
-    fetch(API_URL + "/upload-and-ocr", { method: "POST", body: formData })
+        formData.append("procedureType", currentCase ? currentCase.procedure || "general" : "general");
+    fetch(API_URL + "/process", { method: "POST", body: formData })
         .then(function(r) { return r.json(); })
         .then(function(data) {
             entry.status = data.success ? "uploaded" : "error";
             entry.gcsUrl = data.url || "";
             if (data.ocr && data.ocr.text) { entry.ocrText = data.ocr.text; entry.ocrEntities = data.ocr.entities; }
+              if (data.sections) { entry.sections = data.sections; }
+              if (data.sufficiency) { entry.sufficiency = data.sufficiency; }
             renderUploadedFiles();
         })
         .catch(function(err) { entry.status = "local-only"; renderUploadedFiles(); console.log("Upload to GCS skipped:", err.message); });
