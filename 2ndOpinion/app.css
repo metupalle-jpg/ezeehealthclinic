@@ -530,3 +530,92 @@
 .log-type-ai-review { background: #dbeafe; color: #1e40af; }
 .log-type-consultant-report { background: #d1fae5; color: #065f46; }
 .log-detail { font-size: 0.85em; color: #4b5563; }
+
+/* ========== CONSULTANT PANEL STYLES ========== */
+#consultants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.consultant-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 20px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.consultant-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.consultant-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.consultant-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.consultant-option-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.consultant-option-detail {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+.consultant-status {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.consultant-status.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.consultant-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--gray-600);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.consultant-detail-row:last-child {
+  border-bottom: none;
+}
+
+.consultant-detail-row span:first-child {
+  font-weight: 500;
+  color: var(--gray-500);
+}
+
+.consultant-detail-row span:last-child {
+  color: var(--gray-700);
+}
